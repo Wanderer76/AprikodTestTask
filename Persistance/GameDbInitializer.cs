@@ -16,10 +16,5 @@ namespace Persistance
         {
             await _gameDbContext.Database.MigrateAsync();
         }
-
-        public Task Seed()
-        {
-            return Task.CompletedTask;
-        }
     }
 }

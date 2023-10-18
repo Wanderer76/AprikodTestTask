@@ -20,6 +20,9 @@ namespace Application.Services
 
         public async Task<GameDto> CreateGame(GameDto gameDto)
         {
+            if ((await _gameRepository.GetGameByName(gameDto.Name)) != null)
+                throw new ArgumentException($"Игра с названием {gameDto.Name} уже существует");
+
             var game = _mapper.Map<Game>(gameDto);
             game.Id = Guid.NewGuid();
             var genres = new List<Genre>(gameDto.Genres.Count);
@@ -32,7 +35,8 @@ namespace Application.Services
 
         public async Task DeleteGame(Guid gameId)
         {
-            await _gameRepository.Delete(gameId);
+            var game = await _gameRepository.GetGameById(gameId) ?? throw new ArgumentException($"Игры с id = {gameId} не существует");
+            await _gameRepository.Delete(game);
         }
 
         public async Task<List<GameDto>> GetGames(int offset, int limit)
@@ -46,6 +50,8 @@ namespace Application.Services
         public async Task<List<GameDto>> GetGamesByGenre(string genreName, int offset, int limit)
         {
             var genre = await _genreRepository.GetGenreByName(genreName);
+            if (genre == null)
+                throw new ArgumentException($"Жанра с названием = {genreName} не существует");
             var result = await _gameRepository.GetGamesByGenre(genre, offset, limit);
             return result
                 .Select(game => _mapper.Map<GameDto>(game))
@@ -54,7 +60,11 @@ namespace Application.Services
 
         public async Task<GameDto> EditGame(GameDto gameDto)
         {
-            var game = await _gameRepository.GetGameById(gameDto.Id);
+            var game = await _gameRepository.GetGameById(gameDto.Id) ?? throw new ArgumentException($"Игры с id = {gameDto.Id} не существует");
+
+            if (game.Name != gameDto.Name && (await _gameRepository.GetGameByName(gameDto.Name)) != null)
+                throw new ArgumentException($"Игра с названием {gameDto.Name} уже существует");
+
             var genres = new List<Genre>(gameDto.Genres.Count);
             foreach (var genre in gameDto.Genres)
                 genres.Add(await _genreRepository.GetGenreByNameOrCreate(genre));

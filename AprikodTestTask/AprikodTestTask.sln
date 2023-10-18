@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistance", "..\Persistan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "..\Application\Application.csproj", "{DD2E83E1-D1BF-47CB-B1FA-20620F2A53A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "..\View\View.csproj", "{17B9B318-83A5-4E20-8321-F4A2AC8CD501}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "..\View\View.csproj", "{17B9B318-83A5-4E20-8321-F4A2AC8CD501}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

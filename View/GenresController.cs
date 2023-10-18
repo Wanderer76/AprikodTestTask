@@ -18,15 +18,29 @@ namespace View
         [HttpPost("create")]
         public async Task<IActionResult> CreateGenre(string genreName)
         {
-            var genre = await _genreService.CreateGenre(genreName);
-            return Ok(genre);
+            try
+            {
+                var genre = await _genreService.CreateGenre(genreName);
+                return Ok(genre);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("edit")]
         public async Task<IActionResult> EditGenre([FromBody] GenreDto genreDto)
         {
-            var genre = await _genreService.EditGenre(genreDto);
-            return Ok(genre);
+            try
+            {
+                var genre = await _genreService.EditGenre(genreDto);
+                return Ok(genre);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("list")]
@@ -38,8 +52,15 @@ namespace View
         [HttpDelete("delete/{id:guid}")]
         public async Task<IActionResult> DeleteGenre(Guid id)
         {
-            await _genreService.DeleteGenre(id);
-            return Ok();
+            try
+            {
+                await _genreService.DeleteGenre(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 

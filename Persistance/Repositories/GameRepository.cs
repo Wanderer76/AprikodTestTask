@@ -19,21 +19,24 @@ namespace Persistance.Repositories
             return gameDto;
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(Game game)
         {
-            var game = await _dbContext.Games.FirstOrDefaultAsync(x => x.Id == id);
-            if (game == null)
-                throw new ArgumentException($"Игры с id = {id} не существует");
             _dbContext.Games.Remove(game);
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<Game> GetGameById(Guid id)
+        public async Task<Game?> GetGameById(Guid id)
         {
-            var game = await _dbContext.Games.Include(game => game.Genres).FirstOrDefaultAsync(x => x.Id == id);
-            if (game == null)
-                throw new ArgumentException($"Игры с id = {id} не существует");
-            return game;
+            return await _dbContext.Games
+                .Include(game => game.Genres)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Game?> GetGameByName(string name)
+        {
+            return await _dbContext.Games
+                .Include(game => game.Genres)
+                .FirstOrDefaultAsync(game => game.Name == name);
         }
 
         public async Task<List<Game>> GetGames(int offset, int limit)
@@ -57,10 +60,6 @@ namespace Persistance.Repositories
 
         public async Task<Game> Update(Game gameDto)
         {
-            //var game = await _dbContext.Games.FirstOrDefaultAsync(x => x.Id == gameDto.Id);
-            //if (game == null)
-            //    throw new ArgumentException($"Игры с id = {gameDto.Id} не существует");
-
             _dbContext.Games.Update(gameDto);
             await _dbContext.SaveChangesAsync();
             return gameDto;

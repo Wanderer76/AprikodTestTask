@@ -20,31 +20,20 @@ namespace Persistance.Repositories
             return genre;
         }
 
-        public async Task DeleteGenre(Guid genreId)
+        public async Task DeleteGenre(Genre genre)
         {
-            var genre = await _gameDbContext.Genres.FirstOrDefaultAsync(x => x.Id == genreId);
-            if (genre == null)
-            {
-                throw new ArgumentException($"Жанра с id = {genreId} не существует");
-            }
             _gameDbContext.Genres.Remove(genre);
             await _gameDbContext.SaveChangesAsync();
         }
 
-        public async Task<Genre> GetGenreById(Guid genreId)
+        public async Task<Genre?> GetGenreById(Guid genreId)
         {
-            var genre = await _gameDbContext.Genres.FirstOrDefaultAsync(genre => genre.Id == genreId);
-            if (genre == null)
-                throw new ArgumentException($"Жанра с id = {genreId} не существует");
-            return genre;
+            return await _gameDbContext.Genres.FirstOrDefaultAsync(genre => genre.Id == genreId);
         }
 
-        public async Task<Genre> GetGenreByName(string name)
+        public async Task<Genre?> GetGenreByName(string name)
         {
-            var genre = await _gameDbContext.Genres.FirstOrDefaultAsync(genre => genre.Name == name);
-            if (genre == null)
-                throw new ArgumentException($"Жанра с названием = {name} не существует");
-            return genre;
+            return await _gameDbContext.Genres.FirstOrDefaultAsync(genre => genre.Name == name);
         }
 
         public async Task<Genre> GetGenreByNameOrCreate(string name)

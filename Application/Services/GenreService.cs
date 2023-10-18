@@ -1,6 +1,9 @@
 ﻿using Application.Dto;
+using AprikodTestTask.Entities;
 using AutoMapper;
+using Persistance;
 using Persistance.Repositories;
+using System.Xml.Linq;
 
 namespace Application.Services
 {
@@ -17,13 +20,18 @@ namespace Application.Services
 
         public async Task<GenreDto> CreateGenre(string name)
         {
+            if ((await _genreRepository.GetGenreByName(name)) != null)
+                throw new ArgumentException($"Жанр с названием = {name} уже существует");
             var genre = await _genreRepository.Create(name);
             return _mapper.Map<GenreDto>(genre);
         }
 
         public async Task<GenreDto> EditGenre(GenreDto genreDto)
         {
-            var genre = await _genreRepository.GetGenreById(genreDto.Id);
+            var genre = await _genreRepository.GetGenreById(genreDto.Id) ?? throw new ArgumentException($"Жанра с id = {genreDto.Id} не существует");
+            if (genre.Name != genreDto.Name && (await _genreRepository.GetGenreByName(genreDto.Name)) != null)
+                throw new ArgumentException($"Жанр с названием = {genreDto.Name} уже существует");
+
             genre.Name = genreDto.Name;
             await _genreRepository.Update(genre);
             return genreDto;
@@ -36,7 +44,8 @@ namespace Application.Services
         }
         public async Task DeleteGenre(Guid id)
         {
-            await _genreRepository.DeleteGenre(id);
+            var genre = await _genreRepository.GetGenreById(id) ?? throw new ArgumentException($"Жанра с id = {id} не существует");
+            await _genreRepository.DeleteGenre(genre);
         }
     }
 }
